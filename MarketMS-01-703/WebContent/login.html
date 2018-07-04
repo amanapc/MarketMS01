@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>系统登录 - 超市账单管理系统</title>
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+<script src="js/jquery-3.3.1.js"></script>
+<script>
+	$(document).ready(function() {
+		// 给登录按钮绑定click事件
+		$("input[name='submit']").click(function() {
+			// 获取输入的用户名和密码
+			var username = $("input[name='username']").val();
+			var pass = $("input[name='password']").val();
+			// 输入数据合法验证
+			if (checkInput()) {
+
+				// 	输入合法，向服务器请求登录验证
+				$.post({
+					async : true,
+					url : "login.do",
+					data : {
+						"username" : username,
+						"password" : pass
+					},
+					success : function(result) {
+						if (result == 1) {
+							window.location.href = "admin_index.html";
+						} else {
+							showMsg("用户名或密码不正确")
+						}
+					},
+					error : function(errormsg) {
+						showMsg(errormsg);
+					}
+				})
+			}
+		});
+	});
+
+	function showMsg(msg) {
+		alert(msg);
+	}
+
+	function checkInput(username, password) {
+		return $("form:first").validate({
+			rules: {
+				//1.校验元素的name属性  username:"校验器" 使用单一的校验器
+				//2.校验元素的name属性  username:{校验器:"值",校验器:"值"}
+				username: "required",
+				password: {
+					required: true,
+					digits: true
+				}
+			}
+			
+
+		})
+	}
+</script>
+
+</head>
+
+<body class="blue-style">
+	<div id="login">
+		<div class="icon"></div>
+		<div class="login-box">
+			<form>
+				<dl>
+					<dt>用户名：</dt>
+					<dd>
+						<input type="text" name="username" class="input-text" />
+					</dd>
+					<dt>密 码：</dt>
+					<dd>
+						<input type="password" name="password" class="input-text" />
+					</dd>
+				</dl>
+				<div class="buttons">
+					<input type="button" name="submit" value="登录系统"
+						class="input-button" /> <input type="reset" name="reset"
+						value="重　　填" class="input-button" />
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
