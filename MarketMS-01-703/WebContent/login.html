@@ -14,7 +14,7 @@
 			var username = $("input[name='username']").val();
 			var pass = $("input[name='password']").val();
 			// 输入数据合法验证
-			if (checkInput()) {
+			if (checkInput(username,pass)) {
 
 				// 	输入合法，向服务器请求登录验证
 				$.post({
@@ -44,19 +44,11 @@
 	}
 
 	function checkInput(username, password) {
-		return $("form:first").validate({
-			rules: {
-				//1.校验元素的name属性  username:"校验器" 使用单一的校验器
-				//2.校验元素的name属性  username:{校验器:"值",校验器:"值"}
-				username: "required",
-				password: {
-					required: true,
-					digits: true
-				}
-			}
-			
-
-		})
+		if (username.trim() == "" || password.trim() == "") {
+			alert("请填写用户名或密码")
+			return false
+		}
+		return true
 	}
 </script>
 
