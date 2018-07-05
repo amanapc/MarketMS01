@@ -1,48 +1,234 @@
 ﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Insert title here</title>
-<link type="text/css" rel="stylesheet" href="css/style.css">
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
 <script type="text/javascript">
-function doit(flag,id)
-{
-	if(flag=="del")
-	{
-		if(confirm("确认删除吗？")!=true)
-			return;
+	// 发送请求获取供应商列表，在页面中展示
+	$(function() {
+		$.ajax({
+			type : "get",
+			url : "providerAdmin.do",
+			async : true,
+			success : listTable
+		// servlet传回json数组
+		});
+	})
+
+	function listTable(datas) {
+		var len = datas.length
+		// 后台返回的是数组形式，循环遍历，将数据添加到表中的行
+		// 获取空行
+		var tr = $(".list tr:eq(1)")
+		for (i = 0; i < len; i++) {
+			var data = datas[i]
+
+			var row = tr.clone(true)
+			// 获取新行中的div
+			var divs = row.find("div")
+			// 将对应的数据填入div
+			$(divs[0]).text(data.id)
+			$(divs[1]).html("<a href='#' onclick='modify(this);'>" + data.pname + "</a>")
+			$(divs[2]).text(data.pdesc)
+			$(divs[3]).text(data.contact)
+			$(divs[4]).text(data.tel)
+			$(divs[5]).text(data.address)
+
+			$(".list").append(row)
+		}
+		if (len > 0) {
+			tr.hide()
+		}
 	}
-	window.location = "provider.do?id="+id+"&flag="+flag;
-}
+	// 为form2的button添加点击事件
+	$(function(){
+		$(":button[name='update']").click(function(){
+			// 设定flag值为update
+			$(":hidden[name='flag']").val('update')
+			
+			$.ajax({
+				type : "post",
+				async : true,
+				url : "providerModify.do",
+				data : formToJson($("#form2")),
+				success : function (ret) {
+					
+					if (ret==1) {
+						alert("修改保存成功")
+						
+					} else {
+						alert("修改保存失败")
+					}
+					
+					window.location = "providerAdmin.html"
+				}
+			})
+			
+		});
+		// 删除操作需要传送flag和id
+		$(":button[name='delete']").click(function(){
+			// 设定flag值为update
+			$(":hidden[name='flag']").val('delete')
+			
+			$.ajax({
+				type : "post",
+				async : true,
+				url : "providerModify.do",
+				data : {"flag":"delete","id":$("#form2").find("input[name='id']").val()},
+				success : function (ret) {
+
+					if (ret==1) {
+						alert("删除成功")
+					} else {
+						alert("删除失败")
+					}
+					window.location = "providerAdmin.html"
+					
+				}
+			})
+			
+		})
+		
+	})
+	
+	// 将表单中的数据组成json对象
+	function formToJson(jqform) {
+		var id = jqform.find("input[name='id']").val()
+		var pname = jqform.find("input[name='pname']").val()
+		var pdesc = jqform.find("textarea[name='pdesc']").val()
+		var contact = jqform.find("input[name='contact']").val()
+		var tel = jqform.find("input[name='tel']").val()
+		var address = jqform.find("input[name='address']").val()
+		var flag = jqform.find("input[name='flag']").val()
+		var jsObj = {'id':id,'pname':pname,'pdesc':pdesc,'contact':contact,'tel':tel,'address':address,'flag':flag}
+		return jsObj
+	}
+	// 为供应商名字添加点击事件，
+function modify(obj) {
+		// 清空form2表单
+		$("#form2").find("[type='text']").val("")
+		$("#form2").find("[type='textarea']").val("")
+		$("#form2").find("[type='hidden']").val("") 
+		// 选择当前行中的divs
+		var divs = $(obj).parents("tr").find("div")
+		// 获取点击行的数据
+		var id = $(divs[0]).text()
+		var pname = $(divs[1]).children("a").text()
+		var pdesc =  $(divs[2]).text()
+		var contact =  $(divs[3]).text()
+		var tel =  $(divs[4]).text()
+		var address =  $(divs[5]).text()
+		// 填充修改表单
+		$("#form2").find("input[name='id']").val(id)
+		$("#form2").find("input[name='pname']").val(pname)
+		$("#form2").find("textarea[name='pdesc']").val(pdesc)
+		$("#form2").find("input[name='contact']").val(contact)
+		$("#form2").find("input[name='tel']").val(tel)
+		$("#form2").find("input[name='address']").val(address)
+		
+		
+		$("#list_div").hide()
+		$("#modify").show()
+	}
 </script>
 </head>
 <body>
-<div class="menu">
+	<div class="menu" >
 
-<table>
-<tbody><tr><td><form method="post" action="provider.do">
-<input name="flag" value="search" type="hidden">
-供应商名称：<input name="providerName" class="input-text" type="text"> &nbsp;&nbsp;&nbsp;&nbsp;供应商描述：<input name="providerDesc" class="input-text" type="text">&nbsp;&nbsp;&nbsp;&nbsp;<input value="组 合 查 询" type="submit">
-</form></td></tr>
-</tbody></table>
-</div>
-<div class="main">
-<div class="optitle clearfix">
-<em><input value="添加数据" class="input-button" onclick="window.location='providerAdd.html'" type="button"></em>
-		<div class="title">供应商管理&gt;&gt;</div>
+		<table>
+			<tbody>
+				<tr>
+					<td><form method="post" action="provider.do">
+							<input name="flag" value="search" type="hidden" /> 供应商名称：<input
+								name="panme" class="input-text" type="text" />
+							&nbsp;&nbsp;&nbsp;&nbsp;供应商描述：<input name="providerDesc"
+								class="input-text" type="text">&nbsp;&nbsp;&nbsp;&nbsp;<input
+								value="组 合 查 询" type="submit" />
+						</form></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
+	<div class="main">
+		<div class="optitle clearfix">
+			<em><input value="添加数据" class="input-button" onclick="window.location='providerAdd.html'" type="button" /></em>
+			<div class="title">供应商管理&gt;&gt;</div>
+		</div>
 
-	<div class="content">
-<table class="list">
-  <tbody><tr>
-    <td width="70" height="29"><div class="STYLE1" align="center">编号</div></td>
-    <td width="80"><div class="STYLE1" align="center">供应商名称</div></td>
-    <td width="100"><div class="STYLE1" align="center">供应商描述</div></td>
-    <td width="100"><div class="STYLE1" align="center">联系人</div></td>
+		<div class="content"  id="list_div">
+			<table class="list">
+				<tbody>
+					<tr>
+						<td width="70" height="29"><div class="STYLE1" align="center">编号</div></td>
+						<td width="80"><div class="STYLE1" align="center">供应商名称</div></td>
+						<td width="100"><div class="STYLE1" align="center">供应商描述</div></td>
+						<td width="100"><div class="STYLE1" align="center">联系人</div></td>
 
-    <td width="100"><div class="STYLE1" align="center">电话</div></td>
-    <td width="100"><div class="STYLE1" align="center">地址</div></td>
-  </tr>
-  
-</tbody></table>
+						<td width="100"><div class="STYLE1" align="center">电话</div></td>
+						<td width="100"><div class="STYLE1" align="center">地址</div></td>
+					</tr>
+
+					<tr>
+						<td width="70" height="29"><div class="STYLE1" align="center">--</div></td>
+						<td width="80"><div class="STYLE1" align="center">--</div></td>
+						<td width="100"><div class="STYLE1" align="center">--</div></td>
+						<td width="100"><div class="STYLE1" align="center">--</div></td>
+						<td width="100"><div class="STYLE1" align="center">--</div></td>
+						<td width="100"><div class="STYLE1" align="center">--</div></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
 	</div>
-</div>
-</body></html>
+	
+	
+	<div class="main" id="modify" hidden="hidden">
+		<form id="form2"  method="post" action="providerModify.do">
+			<div class="content">
+				<input name="flag" value="" type="hidden" />
+				<input name="id" value="" type="hidden" />
+				<table class="box">
+					<tbody>
+						<tr>
+							<td class="field">供应商名称：</td>
+							<td><input name="pname" value="" class="text" type="text" />
+								<font color="red">*</font></td>
+
+						</tr>
+						<tr>
+							<td class="field">供应商描述：</td>
+							<td><textarea name="pdesc" cols="45" rows="5"></textarea><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商联系：</td>
+
+							<td><input name="contact" value="" class="text" type="text" /><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商电话：</td>
+							<td><input name="tel" value="" class="text" type="text" /><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商地址：</td>
+							<td><input name="address" value="" class="text" type="text" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="buttons">
+				<input name="update"  value="保存修改" class="input-button" type="button" />
+				<input name="delete"  value="删除供应商" class="input-button" type="button" />  
+				<input name="return"  onclick="window.location='providerAdmin.html';" value="返回" class="input-button" type="button" />
+			</div>
+		</form>
+	</div>
+	
+	
+</body>
+</html>

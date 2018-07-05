@@ -4,57 +4,113 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title></title>
 <link type="text/css" rel="stylesheet" href="css/style.css" />
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/messages_zh.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		$("#form1").validate({
+			rules : {
+				pname : {
+					required : true,
+					rangelength : [ 2, 20 ]
+				},
+				pdesc : {
+					required: true
+				},
+				contact : {
+					required : true,
+					rangelength : [ 1, 5 ]
+				},
+				tel : {
+					required : true,
+					digits : true
+				}
+
+			},
+			submitHandler : function() {
+				$.ajax({
+					type : "post",
+					url : "providerAdd.do",
+					async : true,
+					data : {
+						"pname" : $("input[name='pname']").val(),
+						"pdesc" : $("textarea[name='pdesc']").val(),
+						"contact" : $("input[name='contact']").val(),
+						"tel" : $("input[name='tel']").val(),
+						"address" : $("input[name='address']").val()
+					},
+					success : function(ret) {
+						if (ret == 1) {
+							alert("添加成功")
+							window.location = "providerAdmin.html"
+						} else {
+							alert("添加失败")
+						}
+					}
+				});
+			}
+
+		})
+	})
+</script>
+
+
 </head>
 <body>
-<div class="main">
-	<div class="optitle clearfix">
-		<div class="title">供应商管理&gt;&gt;</div>
+	<div class="main">
+		<div class="optitle clearfix">
+			<div class="title">供应商管理&gt;&gt;</div>
+		</div>
+		<form id="form1" name="form1" method="post">
+			<div class="content">
+				<font color="red"></font> <input name="flag" value="doAdd"
+					type="hidden" />
+				<table class="box">
+
+					<tbody>
+						<tr>
+							<td class="field">供应商名称：</td>
+							<td><input name="pname" value="" class="text" type="text" />
+								<font color="red">*</font></td>
+
+						</tr>
+						<tr>
+							<td class="field">供应商描述：</td>
+							<td><textarea name="pdesc" cols="45" rows="5"></textarea><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商联系：</td>
+
+							<td><input name="contact" value="" class="text" type="text" /><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商电话：</td>
+							<td><input name="tel" value="" class="text" type="text" /><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商地址：</td>
+							<td><input name="address" value="" class="text" type="text" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="buttons">
+				<input name="button" id="button" value="提交" class="input-button"
+					type="submit" /> <input name="button" id="button"
+					onclick="window.location='providerAdmin.html';" value="返回"
+					class="input-button" type="button" />
+			</div>
+		</form>
 	</div>
-	<form id="form1" name="form1" method="post" action="provider.do" onsubmit="return checkit();">
-		<div class="content">
-		<font color="red"></font>
-<input name="flag" value="doAdd" type="hidden">
-			<table class="box">
-
-			<tbody><tr>
-					<td class="field">供应商编号：</td>
-					<td><input name="proId" id="textfield" class="text" type="text"> <font color="red">*</font></td>
-				</tr>
-				<tr>
-					<td class="field">供应商名称：</td>
-					<td><input name="proName" id="textfield2" value="" class="text" type="text"> <font color="red">*</font></td>
-
-				</tr>
-			<tr>
-					<td class="field">供应商描述：</td>
-					<td><textarea name="proDesc" id="textarea" cols="45" rows="5"></textarea></td>
-				</tr>
-				<tr>
-					<td class="field">供应商联系：</td>
-
-					<td><input name="contact" id="textfield2" value="" class="text" type="text"></td>
-				</tr>
-				<tr>
-					<td class="field">供应商电话：</td>
-					<td><input name="phone" id="textfield2" value="" class="text" type="text"></td>
-				</tr>
-				<tr>
-					<td class="field">供应商传真：</td>
-
-					<td><input name="fax" id="textfield2" value="" class="text" type="text"></td>
-				</tr>
-				<tr>
-					<td class="field">供应商地址：</td>
-					<td><input name="address" id="textfield2" value="" class="text" type="text"></td>
-				</tr>
-			</tbody></table>
-		</div>
-
-		<div class="buttons">
-			<input name="button" id="button" value="提交" class="input-button" type="submit"> 
-			<input name="button" id="button" onclick="window.location='provider.do';" value="返回" class="input-button" type="button"> 
-		</div>
-	</form>
-</div>
+	
+	
+	
+	
 </body>
 </html>

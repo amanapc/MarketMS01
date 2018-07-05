@@ -17,10 +17,10 @@ public class DbUtil {
 
 		QueryRunner qr = new QueryRunner(DataSourceUtil.getDataSource());
 
+		
 		return qr.update(sql, objs);
 
 	}
-
 
 	public static <T> List<T> queryObject(String sql, Object[] objs, Class<T> c) throws SQLException {
 		QueryRunner qr = new QueryRunner(DataSourceUtil.getDataSource());
@@ -37,6 +37,8 @@ public class DbUtil {
 		return objs == null ? qr.query(sql, new MapListHandler()) : qr.query(sql, new MapListHandler(), objs);
 
 	}
+	
+
 	
 
 }

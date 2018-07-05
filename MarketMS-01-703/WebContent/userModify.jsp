@@ -117,7 +117,7 @@
 					</tr>
 					<tr>
 						<td class="field">用户地址：</td>
-						<td><textarea name="address" value="${user.address }" class="text" cols="45" rows="5"></textarea></td>
+						<td><textarea name="address"  class="text" cols="45" rows="5">${user.address }</textarea></td>
 					</tr>
 					<tr>
 						<td class="field">用户权限：</td>
