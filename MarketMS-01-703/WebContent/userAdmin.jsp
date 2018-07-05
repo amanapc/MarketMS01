@@ -1,16 +1,16 @@
-﻿<html><head>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" errorPage="500.html" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html><head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Insert title here</title>
 <link type="text/css" rel="stylesheet" href="css/style.css">
 <script type="text/javascript">
-function doit(flag,id)
+function doit(obj)
 {
-	if(flag=="del")
-	{
-		if(confirm("确认删除吗？")!=true)
-			return;
-	}
+
 }
 </script>
 </head><body>
@@ -46,20 +46,18 @@ function doit(flag,id)
     <td width="150"><div class="STYLE1" align="center">权限 </div></td>
   </tr>
   
+<c:forEach items="${users }" var="user">
   <tr>
-    <td height="23"><span class="STYLE1">1</span></td>
-    <td><span class="STYLE1"><a href="#" onclick="doit('mod',1)">admin</a></span></td>
-
-    <td><span class="STYLE1">
-    	女
-    </span></td>
-    <td><span class="STYLE1">0</span></td>
-    <td><span class="STYLE1">0</span></td>
-    <td><span class="STYLE1"></span></td>
-    <td><span class="STYLE1">&nbsp;
-    </span></td>
+    <td height="23"><span class="STYLE1">${user.id }</span></td>
+    <td><span class="STYLE1"><a href="userInfo.do?id=${user.id }">${user.username }</a></span></td>
+    <td><span class="STYLE1">${user.gender == 1 ? "男" : "女" }</span></td>
+    <td><span class="STYLE1">${user.age }</span></td>
+    <td><span class="STYLE1">${user.tel }</span></td>
+    <td><span class="STYLE1">${user.address }</span></td>
+    <td><span class="STYLE1">${user.issupper == 1 ? "经&nbsp;理":"员&nbsp;工"}</span></td>
 
   </tr>
+  </c:forEach>
 </tbody></table>
 </div>
 </div>

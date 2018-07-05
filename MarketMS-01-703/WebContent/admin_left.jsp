@@ -34,7 +34,7 @@
 	
 	<c:if test="${sessionScope.user.issupper == 1 }">
 	<li><a href="providerAdmin.html" target="mainFrame"><img src="images/btn_suppliers.gif" /></a></li>
-	<li><a href="userAdmin.html" target="mainFrame"><img src="images/btn_users.gif" /></a></li>
+	<li><a href="userAdmin.do" target="mainFrame"><img src="images/btn_users.gif" /></a></li>
 	</c:if>
 	
 	<li><a href="#" id="logout"><img src="images/btn_exit.gif" /></a></li>
