@@ -28,8 +28,11 @@
 			// 获取新行中的div
 			var divs = row.find("div")
 			// 将对应的数据填入div
-			$(divs[0]).text(data.id)
+			//$(divs[0]).text(data.id)
+			// 方式一：在同一页面展示修改界面，这样不需要再向服务器请求信息，直接利用表中信息填充修改表单，如果表中的数据不是完整的数据，需要第二种方式
 			$(divs[1]).html("<a href='#' onclick='modify(this);'>" + data.pname + "</a>")
+			// 方式二：在URL后面拼接id，向服务器请求修改页面，再在修改页面中通过js获取URL中的id
+			$(divs[0]).html("<a href='providerModify.html?id="+data.id+"'>" + data.id + "</a>")
 			$(divs[2]).text(data.pdesc)
 			$(divs[3]).text(data.contact)
 			$(divs[4]).text(data.tel)
@@ -106,7 +109,7 @@
 		return jsObj
 	}
 	// 为供应商名字添加点击事件，
-function modify(obj) {
+	function modify(obj) {
 		// 清空form2表单
 		$("#form2").find("[type='text']").val("")
 		$("#form2").find("[type='textarea']").val("")

@@ -2,6 +2,7 @@ package com.qfedu.shop.dao.impl;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.qfedu.shop.dao.ProviderDao;
 import com.qfedu.shop.pojo.Provider;
@@ -39,6 +40,12 @@ public class ProviderDaoImpl implements ProviderDao {
 	public int deleteById(String id) throws SQLException {
 		String sql = "delete from provider where `id`=?";
 		return DbUtil.update(sql, new String[] {id});
+	}
+
+	@Override
+	public List<Map<String, Object>> selectSimple() throws SQLException {
+		String sql = "select id, pname from provider";
+		return DbUtil.queryMap(sql, null);
 	}
 
 }

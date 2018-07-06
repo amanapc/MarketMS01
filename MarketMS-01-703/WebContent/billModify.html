@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/messages_zh.js"></script>
+<script>
+// 解析url中的参数
+$(function(){
+	
+	// 加载供应商select
+	$.ajax({
+		type : "get",
+		url : "providerSimple.do",
+		async : false,
+		success : function (datas) {
+			var select = $("#bill_modify").find("select[name='pid']")
+			var len = datas.length
+			for (i = 0; i < len; i++) {
+				select.append(new Option(datas[i].pname,datas[i].id))
+			}
+		}
+	})
+	
+	
+	// 分割字符串获取数据
+	var search = location.search.substring(1);
+	
+	var jstr = "{"
+	// (id=2) (name=jell)
+	var entryArray = search.split("&")
+	var len = entryArray.length
+	for (i=0;i<entryArray.length-1;i++) {
+		var entry = entryArray[i]
+		// (id 2)
+		var field = entry.split("=")
+		jstr = jstr + '"' +decodeURI(field[0])  + '":"' + decodeURI(field[1]) + '",'
+	}
+	var field =  entryArray[len-1].split("=")
+	jstr = jstr +'"'+ decodeURI(field[0]) + '":"' + decodeURI(field[1]) + '"}'
+	var paramObj = JSON.parse(jstr)
+	
+	// 将数据填充表单
+	$("#bill_modify").find("input[name='id']").val(paramObj.id)
+	$("#bill_modify").find("input[name='gname']").val(paramObj.gname)
+	$("#bill_modify").find("input[name='gcount']").val(paramObj.gcount)
+	$("#bill_modify").find("input[name='price']").val(paramObj.price)
+	var ispaied = paramObj.ispaied
+	$("#bill_modify").find("input[name='ispaied'][value='" + ispaied + "']").prop("checked",true)
+	var pid = paramObj.pid
+	$("#bill_modify").find("select[name='pid']").children("option[value='"+pid+"']").prop("selected",true)
+	$("#bill_modify").find("textarea[name='gdesc']").val(paramObj.gdesc)
+	
+	// 为按钮添加点击事件
+	$("#update_button").click(function(){
+		$("#bill_modify").find("input[name='flag']").val("update")
+	})
+	$("#delete_button").click(function(){
+		$("#bill_modify").find("input[name='flag']").val("delete")
+	})
+	
+	// 验证表单并提交
+	var validator = $("#bill_modify").validate({
+		rules : {
+			gname : {
+				required : true,
+				rangelength : [1, 10]
+			},
+			gcount : {
+				required : true,
+				digits : true
+			},
+			price : {
+				required : true,
+				digits : true
+			},
+			gdesc : {
+				maxlength : 20
+			},
+			ispaied : 'required',
+			pid : 'required',
+			
+		},
+		submitHandler : function() {
+			
+			// 拼接 data
+		 	var inputs = $("#bill_modify").serializeArray();
+			var size = inputs.length - 1
+			var params = ""
+			for (i=0;i<size;i++) {
+				params += inputs[i].name + "=" + inputs[i].value + "&"
+			}
+			params = params + inputs[size].name + "=" + inputs[size].value
+			
+			alert(params)
+			
+			$.ajax({
+				type : "post",
+				url : "billModify.do",
+				async : true,
+				data : params,
+				success : function(ret){
+					if(ret==1){
+						alert("操作成功")
+						location.href="admin_bill_list.html"
+					} else {
+						alert("操作失败")
+					}
+				}
+			})
+		}
+	})
+	
+})
+
+</script>
+
+
+</head>
+<body>
+<div class="menu">
+	<form method="get" action="">
+		商品名称：<input type="text" name="productName" class="input-text" />&nbsp;&nbsp;&nbsp;&nbsp;
+		是否付款：<select name="payStatus">
+			<option value="">请选择</option>
+			<option value="1">已付款</option>
+			<option value="0">未付款</option>
+		</select>&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="submit" name="submit" value="组合查询" class="button" />
+	</form>
+</div>
+<div class="main">
+	<div class="optitle clearfix">
+		<em><input type="button" name="button" value="添加数据" class="input-button" /></em>
+		<div class="title">账单管理&gt;&gt;</div>
+	</div>
+	<form id="bill_modify" method="post" action="billModify.do">
+		<div class="content">
+		<input type="hidden" name="flag" ></input>
+		<input type="hidden" name="id" ></input>
+			<table class="box">
+		
+				<tr>
+					<td class="field">商品名称：</td>
+					<td><input type="text" name="gname" class="text" /></td>
+				</tr>
+				<tr>
+					<td class="field">商品数量：</td>
+					<td><input type="text" name="gcount" class="text" /></td>
+				</tr>
+				<tr>
+					<td class="field">交易金额：</td>
+					<td><input type="text" name="price" class="text" /></td>
+				</tr>
+				<tr>
+						<td class="field">是否付款：</td>
+						<td>&nbsp;已付款<input type="radio" name="ispaied" value="1"/>&nbsp;&nbsp;未付款<input
+							type="radio" name="ispaied" value="0"/></td>
+					</tr>
+					<tr>
+					<td class="field">选择供应商：</td>
+					<td><select name='pid'></select></td>
+				</tr>
+				<tr>
+					<td class="field">商品描述：</td>
+					<td><textarea name="gdesc"></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<div class="buttons">
+			<input type="submit" id="update_button" value="保存修改" class="input-button" />
+			<input type="submit" id="delete_button" value="删除账单" class="input-button" />
+			<input type="button" name="return" value="返回" class="input-button" onclick="history.back();" />
+		</div>
+	</form>
+</div>
+</body>
+</html>

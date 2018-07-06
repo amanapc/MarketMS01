@@ -2,6 +2,7 @@ package com.qfedu.shop.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -43,7 +44,6 @@ public class LoginServlet implements Servlet {
 
 	@Override
 	public void init(ServletConfig arg0) throws ServletException {
-		System.out.println(this + " init");
 		this.config = arg0;
 		
 		userDao = new UserDaoImpl();
@@ -51,7 +51,6 @@ public class LoginServlet implements Servlet {
 
 	@Override
 	public void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException {
-		System.out.println(this + " service");
 		
 		HttpServletRequest request = (HttpServletRequest) arg0;
 		HttpServletResponse response = (HttpServletResponse) arg1;
@@ -66,11 +65,13 @@ public class LoginServlet implements Servlet {
 				// 将用户信息放入会话，
 				request.getSession().setAttribute("user", userInfo);
 				// 在客户端添加cookie，记录成功登录的用户名
-				response.addCookie(new Cookie("username", username));
+				response.addCookie(new Cookie("username", URLEncoder.encode(username, "utf8")));
 				// 向前端发送一个状态数字，1，表示验证成功
+				System.out.println("[[用户登录\t" + username);
 				out.print("1");
 			} else {
 				// 验证失败，向前端发送一个状态数字，0，
+				System.out.println(username);
 				out.print("0");
 			}
 		} catch (SQLException e) {

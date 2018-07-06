@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/messages_zh.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		// 获取url
+		var search = window.location.search
+		// ?id=89
+		var id = search.split('=')[0]
+		// 发起请求，获取对应id的详细信息
+		$.ajax({
+			type : "get",
+			url : "providerInfo.do" + search,
+			async : true,
+			success : function(info) {
+				// servlet传回的是Json对象（通过设置contentType='application/json'）
+				// 填充表单
+				$("#modify_form").find("input[name='id']").val(info.id)
+				$("#modify_form").find("input[name='pname']").val(info.pname)
+				$("#modify_form").find("textarea[name='pdesc']").val(info.pdesc)
+				$("#modify_form").find("input[name='contact']").val(info.contact)
+				$("#modify_form").find("input[name='tel']").val(info.tel)
+				$("#modify_form").find("input[name='address']").val(info.address)
+			}
+
+		});
+	})
+
+	// 表单验证
+	$(function() {
+		var validator = $("#modify_form").validate({
+			rules : {
+				pname : {
+					required : true,
+					rangelength : [ 2, 20 ]
+				},
+				pdesc : {
+					required : true
+				},
+				contact : {
+					required : true,
+					rangelength : [ 1, 5 ]
+				},
+				tel : {
+					required : true,
+					digits : true
+				}
+
+			}
+		})
+		
+		// 添加点击事件
+		$("#modify_form").find("input[name='update']").click(function(){
+			// 设置flag
+			$("#modify_form").find("input[name='flag']").val("update")
+			// 提交表单
+			//$("#modify_form").submit()
+			$.ajax({
+				type : "post",
+				async : true,
+				url : "providerModify.do",
+				data : formToJson($("#modify_form")),
+				success : function (ret) {
+					
+					if (ret==1) {
+						alert("修改保存成功")
+						
+					} else {
+						alert("修改保存失败")
+					}
+					
+					window.location = "providerAdmin.html"
+				}
+			})
+			
+		}) // update.click()
+		
+		$("#modify_form").find("input[name='delete']").click(function(){
+			// 设置flag
+			//$("#modify_form").find("input[name='flag']").val("delete")
+			// 提交表单
+			//$("#modify_form").submit()
+			$.ajax({
+				type : "post",
+				async : true,
+				url : "providerModify.do",
+				data : {"flag":"delete","id":$("#modify_form").find("input[name='id']").val()},
+				success : function (ret) {
+
+					if (ret==1) {
+						alert("删除成功")
+					} else {
+						alert("删除失败")
+					}
+					window.location = "providerAdmin.html"
+					
+				}
+			})
+			
+		}) // delete.click()
+	})
+	
+	// 将表单中的数据组成json对象
+	function formToJson(jqform) {
+		var id = jqform.find("input[name='id']").val()
+		var pname = jqform.find("input[name='pname']").val()
+		var pdesc = jqform.find("textarea[name='pdesc']").val()
+		var contact = jqform.find("input[name='contact']").val()
+		var tel = jqform.find("input[name='tel']").val()
+		var address = jqform.find("input[name='address']").val()
+		var flag = jqform.find("input[name='flag']").val()
+		var jsObj = {'id':id,'pname':pname,'pdesc':pdesc,'contact':contact,'tel':tel,'address':address,'flag':flag}
+		return jsObj
+	}
+</script>
+
+
+</head>
+<body>
+	<div class="main">
+		<div class="optitle clearfix">
+			<div class="title">供应商管理&gt;&gt;</div>
+		</div>
+		<form id="modify_form" name="form1" method="post" action="providerModify.do">
+			<div class="content">
+				<input name="flag" value="" type="hidden" /> <input name="id" value="" type="hidden" />
+				<table class="box">
+					<tbody>
+						<tr>
+							<td class="field">供应商名称：</td>
+							<td><input name="pname" value="" class="text" type="text" />
+								<font color="red">*</font></td>
+
+						</tr>
+						<tr>
+							<td class="field">供应商描述：</td>
+							<td><textarea name="pdesc" cols="45" rows="5"></textarea><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商联系：</td>
+
+							<td><input name="contact" value="" class="text" type="text" /><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商电话：</td>
+							<td><input name="tel" value="" class="text" type="text" /><font
+								color="red">*</font></td>
+						</tr>
+						<tr>
+							<td class="field">供应商地址：</td>
+							<td><input name="address" value="" class="text" type="text" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="buttons">
+				<input name="update" value="保存修改" class="input-button" type="button" />
+				<input name="delete" value="删除供应商" class="input-button"
+					type="button" /> <input name="return"
+					onclick="window.location='providerAdmin.html';" value="返回"
+					class="input-button" type="button" />
+			</div>
+		</form>
+	</div>
+</body>
+</html>

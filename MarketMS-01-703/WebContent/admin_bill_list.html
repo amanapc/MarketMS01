@@ -4,6 +4,46 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title></title>
 <link type="text/css" rel="stylesheet" href="css/style.css" />
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script >
+
+$(function(){
+	$.ajax({
+		type : "get",
+		url : "billAdmin.do",
+		async : true,
+		success : function (datas) {
+			var len = datas.length
+			var table = $("table.list")
+			var emptyTr = $("table.list tr:eq(1)")
+			for (i=0;i<len;i++) {
+				var tr = emptyTr.clone()
+				var tds = tr.children("td")
+				$(tds[0]).text(datas[i].id)
+				
+				// 拼接url，将账单信息转发到修改页面（）
+				var search = jQuery.param(datas[i])
+				
+				$(tds[1]).html("<a href='billModify.html?" + search + "'>" + datas[i].gname + "</a>")
+				$(tds[2]).text(datas[i].gcount)
+				$(tds[3]).text(datas[i].price)
+				$(tds[4]).text(datas[i].ispaied == 1 ? "是": "否")
+				$(tds[5]).text(datas[i].pname)
+				$(tds[6]).text(datas[i].gdesc)
+				$(tds[7]).text(datas[i].billtime)
+				
+				table.append(tr)
+			}
+			emptyTr.hide()
+			
+		}
+	})
+})
+
+</script>
+
+
+
 </head>
 <body>
 <div class="menu">
@@ -19,7 +59,7 @@
 </div>
 <div class="main">
 	<div class="optitle clearfix">
-		<em><input type="button" name="button" value="添加数据" class="input-button" onclick="location.href='modify.html'" /></em>
+		<em><input type="button" name="button" value="添加数据" class="input-button" onclick="location.href='billAdd.html'" /></em>
 		<div class="title">账单管理&gt;&gt;</div>
 	</div>
 	<div class="content">
@@ -35,14 +75,14 @@
 				<td>账单时间</td>
 			</tr>
 			<tr>
-				<td>1</td>
-				<td>1</td>
-				<td>1</td>
-				<td>1</td>
-				<td>1</td>
-				<td>1</td>
-				<td>1</td>
-				<td>1</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
 			</tr>
 		</table>
 	</div>
