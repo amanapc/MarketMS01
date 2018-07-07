@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet Filter implementation class LoginFilter
+ * 登录验证
  */
 @WebFilter("/*")
 public class LoginFilter implements Filter {
@@ -21,21 +21,18 @@ public class LoginFilter implements Filter {
      * Default constructor. 
      */
     public LoginFilter() {
-        System.out.println(this + " construct");
     }
 
 	/**
 	 * @see Filter#destroy()
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		System.out.println(this + " doFilter");
 		
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
@@ -50,9 +47,7 @@ public class LoginFilter implements Filter {
 		// /login.html /login.do /css/* /images/* /js/* 
 		
 		boolean isWhitePage = reqUri.matches("(^/(?:css|images|js)/\\S+)|(^/login.(?:html|do))");
-		System.out.println(user);
-		System.out.println(reqUri);
-		System.out.println(isWhitePage);
+		
 		if (user == null && !isWhitePage) {
 			resp.sendRedirect("login.html");
 			
@@ -67,7 +62,6 @@ public class LoginFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		System.out.println(this + " init");
 	}
 
 }

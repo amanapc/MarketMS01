@@ -53,7 +53,6 @@ public class BillDaoImpl implements BillDao {
 
 	@Override
 	public int deleteById(String[] bills) throws SQLException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

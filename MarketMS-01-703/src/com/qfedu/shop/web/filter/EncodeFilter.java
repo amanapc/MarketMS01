@@ -8,35 +8,30 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 
-@WebFilter({ "*.do", "*.html", "*.jsp" })
 public class EncodeFilter implements Filter {
 
+	private String codeset;
 	public EncodeFilter() {
-		System.out.println(this + " construct");
 	}
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
 			throws IOException, ServletException {
-		System.out.println(this + " doFilter");
-		arg0.setCharacterEncoding("utf8");
-		arg1.setCharacterEncoding("utf8");
+		arg0.setCharacterEncoding(codeset);
+		arg1.setCharacterEncoding(codeset);
 
 		arg2.doFilter(arg0, arg1);
 
 	}
-
+	
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		System.out.println(this + " init");
+		codeset = arg0.getInitParameter("codeset");
 	}
 
 }

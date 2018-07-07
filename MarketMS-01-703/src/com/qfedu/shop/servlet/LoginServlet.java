@@ -67,11 +67,9 @@ public class LoginServlet implements Servlet {
 				// 在客户端添加cookie，记录成功登录的用户名
 				response.addCookie(new Cookie("username", URLEncoder.encode(username, "utf8")));
 				// 向前端发送一个状态数字，1，表示验证成功
-				System.out.println("[[用户登录\t" + username);
 				out.print("1");
 			} else {
 				// 验证失败，向前端发送一个状态数字，0，
-				System.out.println(username);
 				out.print("0");
 			}
 		} catch (SQLException e) {
